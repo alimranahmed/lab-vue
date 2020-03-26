@@ -73,22 +73,18 @@
     methods: {
       fetchOffers() {
         let self = this;
-        this.login().then(function (token) {
-          self.submitApplication(token);
-        });
+        this.login().then(self.submitApplication);
       },
 
       login() {
         if (this.isAlreadyLoggedIn()) {
-          return this.tokenPromise();
+          return Promise.resolve(sessionStorage.token);
         }
 
         let self = this;
 
         return axios.post(this.url + '/login', this.loginCredentials)
-          .then((response) => {
-            return self.storeLoginResponse(response);
-          })
+          .then(self.storeLoginResponse)
           .catch((error) => {
             alert(error.response.data.message)
           });
@@ -96,16 +92,6 @@
 
       isAlreadyLoggedIn() {
         return sessionStorage.token && sessionStorage.url === this.url;
-      },
-
-      tokenPromise() {
-        return new Promise(function (resolve, reject) {
-          if (sessionStorage.token) {
-            resolve(sessionStorage.token);
-          } else {
-            reject('Url not found');
-          }
-        });
       },
 
       storeLoginResponse(response) {
