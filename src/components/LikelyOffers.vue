@@ -117,10 +117,9 @@
       submitApplication(token) {
 
         let self = this;
+        let headers = {headers: {Authorization :  'Bearer ' + token}};
 
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-
-        axios.post(this.url + '/applications', this.application)
+        axios.post(this.url + '/applications', this.application, headers)
           .then((response) => {
             self.offers = response.data.offers;
             return response;
