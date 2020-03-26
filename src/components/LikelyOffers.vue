@@ -117,12 +117,16 @@
       submitApplication(token) {
 
         let self = this;
-        let headers = {headers: {Authorization :  'Bearer ' + token}};
+        let headers = {headers: {Authorization: 'Bearer ' + token}};
 
         axios.post(this.url + '/applications', this.application, headers)
           .then((response) => {
             self.offers = response.data.offers;
             return response;
+          })
+          .catch((error) => {
+            self.offers = [];
+            alert(error.response.data.message);
           });
       }
     }
