@@ -49,6 +49,7 @@
       msg: String,
       url: {default: "http://ratehammer-core.test/api"},
     },
+
     data() {
       return {
         offers: [],
@@ -64,41 +65,53 @@
         }
       }
     },
+
     mounted() {
       this.fetchOffers();
     },
+
     methods: {
       fetchOffers() {
         let self = this;
         this.login().then(function (token) {
           self.submitApplication(token);
         });
-        //this.submitApplication(sessionStorage.token);
       },
 
       login() {
-        if (sessionStorage.token && sessionStorage.url === this.url) {
-          return new Promise(function (resolve, reject) {
-            if (sessionStorage.url) {
-              resolve(sessionStorage.url);
-            } else {
-              reject('Url not found');
-            }
-          });
+        if (this.isAlreadyLoggedIn()) {
+          return this.tokenPromise();
         }
 
         let self = this;
 
         return axios.post(this.url + '/login', this.loginCredentials)
           .then((response) => {
-            console.log(response.data.data.access.token);
-            sessionStorage.url = self.url;
-            sessionStorage.token = response.data.data.access.token;
-            return sessionStorage.token;
+            return self.storeLoginResponse(response);
           })
           .catch((error) => {
             alert(error.response.data.message)
           });
+      },
+
+      isAlreadyLoggedIn() {
+        return sessionStorage.token && sessionStorage.url === this.url;
+      },
+
+      tokenPromise() {
+        return new Promise(function (resolve, reject) {
+          if (sessionStorage.token) {
+            resolve(sessionStorage.token);
+          } else {
+            reject('Url not found');
+          }
+        });
+      },
+
+      storeLoginResponse(response) {
+        sessionStorage.url = this.url;
+        sessionStorage.token = response.data.data.access.token;
+        return sessionStorage.token;
       },
 
       submitApplication(token) {
@@ -110,6 +123,7 @@
         axios.post(this.url + '/applications', this.application)
           .then((response) => {
             self.offers = response.data.offers;
+            return response;
           });
       }
     }
