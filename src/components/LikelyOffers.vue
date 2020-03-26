@@ -69,13 +69,22 @@
     },
     methods: {
       fetchOffers() {
-        this.login();
-        this.submitApplication(sessionStorage.token);
+        let self = this;
+        this.login().then(function (token) {
+          self.submitApplication(token);
+        });
+        //this.submitApplication(sessionStorage.token);
       },
 
       login() {
         if (sessionStorage.token && sessionStorage.url === this.url) {
-          return;
+          return new Promise(function (resolve, reject) {
+            if (sessionStorage.url) {
+              resolve(sessionStorage.url);
+            } else {
+              reject('Url not found');
+            }
+          });
         }
 
         let self = this;
@@ -85,6 +94,7 @@
             console.log(response.data.data.access.token);
             sessionStorage.url = self.url;
             sessionStorage.token = response.data.data.access.token;
+            return sessionStorage.token;
           })
           .catch((error) => {
             alert(error.response.data.message)
