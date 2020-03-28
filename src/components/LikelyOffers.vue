@@ -1,42 +1,51 @@
 <template>
-  <div class="offers-container">
+  <div class="offers-container pt-2">
+    <div class="grid grid-cols-2">
+      <div class="px-2">
+        <form method="post" @submit.prevent="" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <label for="url" class="label">URL</label>
+          <input type="text" id="url" placeholder="URL" v-model="url" class="input-text">
+          <label for="email" class="label">Email</label>
+          <input type="text" id="email" placeholder="Email" v-model="loginCredentials.email" class="input-text">
+          <label for="password" class="label">Password</label>
+          <input type="password" id="password" placeholder="Password" v-model="loginCredentials.password"
+                 class="input-text">
+        </form>
+      </div>
 
-    <div class="login-form">
-      <form method="post" @submit.prevent="">
-        <label for="url">URL</label>
-        <input type="text" id="url" placeholder="URL" v-model="url">
-        <label for="email">Email</label>
-        <input type="text" id="email" placeholder="Email" v-model="loginCredentials.email">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password" v-model="loginCredentials.password">
-      </form>
+      <div class="px-2">
+        <form method="post" @submit.prevent="fetchOffers" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <label for="loan-amount" class="label">Loan amount</label>
+          <input type="number" id="loan-amount" placeholder="Loan amount" v-model="application.loan_amount"
+                 class="input-text">
+          <label for="loan-term" class="label">Loan Term</label>
+          <input type="number" id="loan-term" placeholder="Loan term" v-model="application.loan_term"
+                 class="input-text">
+          <button type="submit"
+                  class="btn-blue">
+            Show Lender Quote
+          </button>
+        </form>
+      </div>
     </div>
+    <div class="grid grid-cols-6">
+      <div class="col-span-4 col-start-2">
+        <table class="table-fixed w-full" v-if="offers.length">
+          <tr>
+            <th class="border px-4 py-2 w-1/2">Lender</th>
+            <th class="border px-4 py-2 w-1/4">Status</th>
+            <th class="border px-4 py-2 w-1/4">Total Payable</th>
+          </tr>
+          <tr v-for="(offer, key) in offers" :key="key">
+            <td class="border px-4 py-2">{{offer.lender.name}}</td>
+            <td class="border px-4 py-2">{{offer.status}}</td>
+            <td class="border px-4 py-2">{{offer.total_payable}}</td>
+          </tr>
+        </table>
 
-    <div class="application-form">
-      <form method="post" @submit.prevent="fetchOffers">
-        <label for="loan-amount">Loan amount</label>
-        <input type="number" id="loan-amount" placeholder="Loan amount" v-model="application.loan_amount">
-        <label for="loan-term">Loan Term</label>
-        <input type="number" id="loan-term" placeholder="Loan term" v-model="application.loan_term">
-        <button type="submit">Show Lender Quote</button>
-      </form>
+        <div v-else>Loading...</div>
+      </div>
     </div>
-
-    <table class="offers-table" v-if="offers.length">
-      <tr>
-        <th>Lender</th>
-        <th>Status</th>
-        <th>Total Payable</th>
-      </tr>
-      <tr v-for="(offer, key) in offers" :key="key">
-        <td>{{offer.lender.name}}</td>
-        <td>{{offer.lender.name}}</td>
-        <td>{{offer.status}}</td>
-        <td>{{offer.total_payable}}</td>
-      </tr>
-    </table>
-
-    <div v-else>Loading...</div>
 
   </div>
 </template>
@@ -45,10 +54,6 @@
   const axios = require('axios').default;
   export default {
     name: 'LikelyOffers',
-    props: {
-      msg: String,
-      url: {default: "http://ratehammer-core.test/api"},
-    },
 
     data() {
       return {
@@ -62,12 +67,13 @@
         loginCredentials: {
           email: 'customer@example.com',
           password: 'secret',
-        }
+        },
+        url: "http://ratehammer-core.test/api"
       }
     },
 
     mounted() {
-      this.fetchOffers();
+      //this.fetchOffers();
     },
 
     methods: {
