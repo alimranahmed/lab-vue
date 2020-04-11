@@ -1,32 +1,36 @@
 <template>
   <div class="offers-container pt-2">
-    <div class="grid grid-cols-2">
-      <div class="px-2">
-        <form method="post" @submit.prevent="" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <label for="url" class="label">URL</label>
-          <input type="text" id="url" placeholder="URL" v-model="url" class="input-text">
-          <label for="email" class="label">Email</label>
-          <input type="text" id="email" placeholder="Email" v-model="loginCredentials.email" class="input-text">
-          <label for="password" class="label">Password</label>
-          <input type="password" id="password" placeholder="Password" v-model="loginCredentials.password"
-                 class="input-text">
-        </form>
-      </div>
-
-      <div class="px-2">
-        <form method="post" @submit.prevent="fetchOffers" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <label for="loan-amount" class="label">Loan amount</label>
-          <input type="number" id="loan-amount" placeholder="Loan amount" v-model="application.loan_amount"
-                 class="input-text">
-          <label for="loan-term" class="label">Loan Term</label>
-          <input type="number" id="loan-term" placeholder="Loan term" v-model="application.loan_term"
-                 class="input-text">
-          <button type="submit"
-                  class="btn-blue">
-            Show Lender Quote
-          </button>
-        </form>
-      </div>
+    <div class="px-2">
+      <form method="post" @submit.prevent="fetchOffers" class="bg-white shadow-md rounded">
+        <div class="grid grid-cols-8">
+          <div class="col-span-2 px-3">
+            <label for="url" class="label">URL</label>
+            <input type="text" id="url" placeholder="URL" v-model="url" class="input-text">
+          </div>
+          <div class="col-span-2 px-3">
+            <label for="email" class="label">Email</label>
+            <input type="text" id="email" placeholder="Email" v-model="loginCredentials.email" class="input-text">
+          </div>
+          <div class="col px-3">
+            <label for="password" class="label">Password</label>
+            <input type="password" id="password" placeholder="Password" v-model="loginCredentials.password"
+                   class="input-text">
+          </div>
+          <div class="col px-3">
+            <label for="loan-amount" class="label">Loan amount</label>
+            <input type="number" id="loan-amount" placeholder="Loan amount" v-model="application.loan_amount"
+                   class="input-text">
+          </div>
+          <div class="col px-3">
+            <label for="loan-term" class="label">Loan Term</label>
+            <input type="number" id="loan-term" placeholder="Loan term" v-model="application.loan_term"
+                   class="input-text">
+          </div>
+          <div class="col pt-6">
+            <button type="submit" class="btn-blue">Show Quote</button>
+          </div>
+        </div>
+      </form>
     </div>
     <div class="grid grid-cols-6">
       <div class="col-span-4 col-start-2">
@@ -43,7 +47,10 @@
           </tr>
         </table>
 
-        <div v-else>Loading...</div>
+        <div class="text-center mt-10">
+          <span v-if="is_requested && !offers.length">Loading...</span>
+          <span v-if="!is_requested && !offers.length">No offer</span>
+        </div>
       </div>
     </div>
 
@@ -58,6 +65,7 @@
     data() {
       return {
         offers: [],
+        is_requested: false,
         application: {
           purpose: 'likely_offer',
           loan_amount: 5000,
@@ -78,6 +86,7 @@
 
     methods: {
       fetchOffers() {
+        this.is_requested = true;
         let self = this;
         this.login().then(self.submitApplication);
       },
@@ -114,9 +123,11 @@
         axios.post(this.url + '/applications', this.application, headers)
           .then((response) => {
             self.offers = response.data.offers;
+            self.is_requested = false;
             return response;
           })
           .catch((error) => {
+            self.is_requested = false;
             self.offers = [];
             alert(error.response.data.message);
           });
