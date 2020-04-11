@@ -32,18 +32,22 @@
         </div>
       </form>
     </div>
-    <div class="grid grid-cols-6">
+    <div class="grid grid-cols-6 mt-3">
       <div class="col-span-4 col-start-2">
         <table class="table-fixed w-full" v-if="offers.length">
           <tr>
             <th class="border px-4 py-2 w-1/2">Lender</th>
             <th class="border px-4 py-2 w-1/4">Status</th>
             <th class="border px-4 py-2 w-1/4">Total Payable</th>
+            <th class="border px-4 py-2 w-1/4">APR</th>
+            <th class="border px-4 py-2 w-1/4">Flat Rate</th>
           </tr>
           <tr v-for="(offer, key) in offers" :key="key">
             <td class="border px-4 py-2">{{offer.lender.name}}</td>
             <td class="border px-4 py-2">{{offer.status}}</td>
             <td class="border px-4 py-2">{{offer.total_payable}}</td>
+            <td class="border px-4 py-2">{{offer.apr}}</td>
+            <td class="border px-4 py-2">{{offer.flat_rate}}</td>
           </tr>
         </table>
 
