@@ -1,16 +1,20 @@
 <template>
   <div id="app">
-    <LikelyOffers msg="Welcome to Your Vue.js App"/>
+<!--    <LikelyOffers msg="Welcome to Your Vue.js App"/>-->
+    <pusher-client></pusher-client>
   </div>
 </template>
 
 <script>
-  import LikelyOffers from './components/LikelyOffers.vue'
+  // import LikelyOffers from './components/LikelyOffers.vue'
+
+  import PusherClient from "./components/PusherClient";
 
   export default {
     name: 'App',
     components: {
-      LikelyOffers
+      PusherClient,
+      // LikelyOffers
     }
   }
 </script>
